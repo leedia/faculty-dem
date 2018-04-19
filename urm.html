@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Percentage of URM Faculty 2008-2018</title>
+		
+		<script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+		<script type="text/javascript" src="https://code.highcharts.com/modules/data.js"></script>
+		
+		<script type="text/javascript">
+			$(document).ready(function() {
+				
+				$.get('urm.csv', function(csv) {
+
+				    $('#container').highcharts({
+				        chart: {
+				        	type: 'line'
+				        },
+				        legend: {
+				        	enabled:false
+				        },
+				        data: {
+				            csv: csv
+				        },
+				        title: {
+							text: 'Percentage of Tenure Track & Tenured URM Faculty 2008-2018'
+						},
+						yAxis: {
+							title: {
+								text: 'Percent (%) of URM Faculty'
+							},
+							min: 0
+						},
+						xAxis: {
+							title: {
+								text: 'Year'
+							}
+						},
+						colors: ['#004e6a','#29a848','#a82931']
+				    }, function(chart){
+				        var $dropdown = $('#dropdown').append('<select><option>Select school</option></select>').find('select'), $option, conc;
+
+				        cntr = 0;
+				        $(chart.series).each(function(i, conc){
+				        	conc.options.id = conc.options.name;
+				        	if (cntr % 2) $dropdown.append('<option>' + conc.name.split(' ')[0] + '</option>');
+				        	cntr++;
+				        });
+									        
+				        $dropdown.change(function(){
+
+				        	$(chart.series).each(function(){
+							    this.setVisible(false, false);
+							});
+
+				        	//console.log($(this).val());
+				            $option = $(this).val();
+				            conc = chart.get($option + ' Tenure Track'); 
+				            conc.setVisible(true,true);
+				            conc = chart.get($option + ' Tenured'); 
+				            conc.setVisible(true,true);
+				        });
+
+				        $(chart.series).each(function(){
+							this.setVisible(false, false);
+						});
+				        $option = 'University';
+				        conc = chart.get($option + ' Tenure Track'); 
+				        conc.setVisible(true,true);
+				        conc = chart.get($option + ' Tenured'); 
+				        conc.setVisible(true,true);
+				        $('select>option:eq(1)').attr('selected', true);
+				    
+				    });
+				});
+				
+			});
+		</script>	
+	</head>
+	<body>
+		<div id="container" style="text-align:center; width: 600px; height: 400px; margin: 0 auto"></div>
+		<div id="dropdown" style = "text-align:center;"></div>
+				
+	</body>
+</html>
